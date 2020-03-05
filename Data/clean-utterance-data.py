@@ -37,3 +37,26 @@ data_export = data[columns_to_keep]
 
 # this file is not shared publicly
 data_export.to_csv('utterance-data-with-labels.csv', index = False)
+
+true_labels = {
+        'IsQuestion' : ['Question'],
+        'IsInstructionalStatement' : ['Instructional'],
+        'IsDisciplinaryStatement' : ['Disciplinary'],
+        'IsEvaluationFollowupIncluded' : ['Yes'],
+        'IsEvaluationElaborated' : ['Elaborated'],
+        'IsEvaluationValencePositive' : ['Positive'],
+        'CogLevel' : ['High'],
+        'Uptake' : ['Uptake/Genuine Uptake'],
+        'IsDisciplinaryTermsPresent' : ['Yes','yes'],
+        'IsInstructionalQuestion' : ['Instructional'],
+        'IsDisciplinaryQuestion' : ['Disciplinary'],
+        'IsStudentResponsePresent' : ['Yes','yes'],
+        'Authenticity' : ['Authentic Question'],
+        'IsSerialQuestion' : ['Yes']
+        }
+
+for feature in true_labels:
+    data_export.loc[~data_export[feature].isin(true_labels[feature]), feature] = 0
+    data_export.loc[data_export[feature].isin(true_labels[feature]), feature] = 1   
+    
+data_export.to_csv('utterance-data-with-labels-binary.csv', index = False)
