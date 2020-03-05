@@ -36,4 +36,4 @@ columns_to_keep = [
 data_export = data[columns_to_keep]
 
 # this file is not shared publicly
-data_export.to_csv('utterance-data-with-labels.csv')
+data_export.to_csv('utterance-data-with-labels.csv', index = False)
