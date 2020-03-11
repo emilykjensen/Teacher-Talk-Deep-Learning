@@ -1,2 +1,3 @@
 # do not track data files
 *utterance-data*
+.DS_Store
