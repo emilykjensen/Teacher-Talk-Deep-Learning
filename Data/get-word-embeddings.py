@@ -5,7 +5,9 @@ import pandas as pd
 # reference article
 # https://medium.com/analytics-vidhya/basics-of-using-pre-trained-glove-vectors-in-python-d38905f356db
 
-glove_100_file = "/Users/emilyjensen/Dropbox (Emotive Computing)/Emily CETD/Cathlyn_EDM/common-models-original-download/include/glove.6B.100d.txt"
+
+# you can find this file at https://nlp.stanford.edu/projects/glove
+glove_100_file = "/path/to/glove.6B.100d.txt"
 
 embeddings_dict = {}
 
@@ -24,6 +26,7 @@ with open(glove_100_file, 'r', encoding="utf-8") as f:
     #skip unknown words, which impacts averaging
     #if all words are unknown, return array of 0's
 
+# this file is not shared publicly
 utterance_file = "utterance-data-with-labels-binary.csv"
 
 data = pd.read_csv(utterance_file).set_index(['ObsID','UtteranceID'])
@@ -62,5 +65,5 @@ data = data.join(data['avg_embeddings'].apply(pd.Series).rename(columns = lambda
 data['max_embeddings'] = utterances.apply(element_max_embeddings)
 data = data.join(data['max_embeddings'].apply(pd.Series).rename(columns = lambda x : 'glove100max_' + str(x)))
 
-
+# this file is not shared publicly
 data.to_csv('utterance-data-with-labels-binary-glove100-embeddings-draft.csv')
