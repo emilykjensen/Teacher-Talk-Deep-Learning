@@ -19,35 +19,48 @@ with open(glove_100_file, 'r', encoding="utf-8") as f:
         
 
 #%% Generate embeddings for teacher utterances
+# Implementation notes: 
+    #everything to lowercase
+    #skip unknown words, which impacts averaging
+    #if all words are unknown, return array of 0's
 
 utterance_file = "utterance-data-with-labels-binary.csv"
 
 data = pd.read_csv(utterance_file).set_index(['ObsID','UtteranceID'])
 utterances = data['TranscribedUtterance']
 
-# add columns for embeddings
-embeddings_cols = ['glove100_' + str(i) for i in range(100)]
-to_add = pd.DataFrame(index = data.index, columns = embeddings_cols, data = np.full((len(data),100), np.nan))
-data_embeddings = data.join(to_add)
-
 # for each utterance, average embeddings for words in each utterance
 def average_embeddings(utterance):
     embeddings = []
-    words = utterance.split()
+    words = utterance.lower().split()
     for word in words:
         try:
             embeddings.append(embeddings_dict[word])
         except:
-            print('{} not found, skipping'.format(word))
+            print('skipped: {}'.format(word))
     return np.average(embeddings, axis = 0)
 
 # for each utterance, choose element-wise max
 def element_max_embeddings(utterance):
     embeddings = []
-    words = utterance.split()
+    words = utterance.lower().split()
     for word in words:
         try:
             embeddings.append(embeddings_dict[word])
         except:
-            print('{} not found, skipping'.format(word))
-    return np.max(embeddings, axis = 0)
+            print('skipped: {}'.format(word))
+    if len(embeddings) == 0:
+        # this happens when all of the words in an utterance are unknown
+        return np.zeros((100,))
+    else:
+        return np.max(embeddings, axis = 0)
+
+# generate embeddings and combine with labels
+data['avg_embeddings'] = utterances.apply(average_embeddings)
+data = data.join(data['avg_embeddings'].apply(pd.Series).rename(columns = lambda x : 'glove100avg_' + str(x)))
+
+data['max_embeddings'] = utterances.apply(element_max_embeddings)
+data = data.join(data['max_embeddings'].apply(pd.Series).rename(columns = lambda x : 'glove100max_' + str(x)))
+
+
+data.to_csv('utterance-data-with-labels-binary-glove100-embeddings-draft.csv')
