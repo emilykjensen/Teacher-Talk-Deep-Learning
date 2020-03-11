@@ -1,3 +1,2 @@
 # do not track data files
-*utterance-data-with-labels-binary.csv
-*utterance-data-with-labels.csv
+*utterance-data*
