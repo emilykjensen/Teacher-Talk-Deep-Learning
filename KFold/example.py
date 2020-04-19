@@ -72,6 +72,6 @@ for train_index, test_index in group_kfold.split(docs2, respList, groups): # KFO
 
 # KFOLD ADDITION
 print("Averages Across ", group_kfold.get_n_splits(docs2, respList, groups), " KFold splits is:")
-print('Test score:', average(score_array))
-print('Test accuracy:', average(acc_array))
-print('Test AUC:',average(roc_array))
+print('Test score:', sum(score_array)/len(score_array))
+print('Test accuracy:', sum(acc_array)/len(acc_array))
+print('Test AUC:',sum(roc_array)/len(roc_array))
